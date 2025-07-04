@@ -1,0 +1,2429 @@
+<html lang="ko"><head><script src="https://apis.google.com/_/scs/abc-static/_/js/k=gapi.lb.ko.WGpIV2x4iQY.O/m=gapi_iframes/rt=j/sv=1/d=1/ed=1/rs=AHpOoo8VgFeuWEnkRtIwJ-OxuMAcCwfIKg/cb=gapi.loaded_0?le=scs" async=""></script><script src="https://pagead2.googlesyndication.com/pagead/managed/js/adsense/m202507010101/show_ads_impl_fy2021.js"></script><script>(function(firebaseConfig, initialAuthToken, appId) {
+        window.__firebase_config = firebaseConfig;
+        window.__initial_auth_token = initialAuthToken;
+        window.__app_id = appId;
+            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6IjM3MTE1MjViZGZmNmM4YmM2NjM2NDE3ZjgwOGMzYzFlYTkyN2E0YmMiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6XC9cL2lkZW50aXR5dG9vbGtpdC5nb29nbGVhcGlzLmNvbVwvZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIxNDQ0NTU5OTAxODI3OTgzMjMzOCIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjXzNmODUyNGQ5NTdlNzk0OWNfZW1wbG95ZWUtc3ByZWFkc2hlZXQtYXBwLTc1In0sImV4cCI6MTc1MTY0Mjc0MSwiaWF0IjoxNzUxNjM5MTQxLCJhbGciOiJSUzI1NiJ9.uEf5NdOZMSTNg51nB2SkXtdN3QenIbNEvPNz0IctndShKOw10wCCjP7440eS5ZIAsoaIsu_wgKpOH3TNdAKzQnOcYkGF-WBjpER9m_d_yk4X8lfHwRF8i1SE4MJlKSrceaWuxBkrayGVbEQlhshlRVwpvKwrbHsAz3CQaN5aRJx0aP6X80rrqYx97XStZDUfelPBR8HX1irE4hN0HVJPPgpEORs6KnGQ7TtKCeYL-kdneodVHf56sAexRAKujpFm0ZW6xcm4rXyEPbjMJA0nEL-UdrjiKYzw5E0O_yf5cCA1ekKPFCgSgw5GUFpqDczmbGOsc47G-wGAwGYmHMl_Nw","c_3f8524d957e7949c_employee-spreadsheet-app-75")</script><script>(function() {
+  // Ensure this script is executed only once
+  if (window.firebaseAuthBridgeScriptLoaded) {
+    return;
+  }
+  window.firebaseAuthBridgeScriptLoaded = true;
+
+  let nextTokenPromiseId = 0;
+
+  // Stores { resolve, reject } for ongoing token requests
+  const pendingTokenPromises = {};
+
+  // Listen for messages from the Host Application
+  window.addEventListener('message', function(event) {
+
+    const messageData = event.data;
+
+  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
+      const { success, token, error, promiseId } = messageData ?? {};
+      if (pendingTokenPromises[promiseId]) {
+        if (success) {
+          pendingTokenPromises[promiseId].resolve(token);
+        } else {
+          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
+        }
+        delete pendingTokenPromises[promiseId];
+      }
+    }
+  });
+
+  // Expose a function for the Generated App to request a new Firebase token
+  window.requestNewFirebaseToken = function() {
+    const currentPromiseId = nextTokenPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingTokenPromises[currentPromiseId] = { resolve, reject };
+    });
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'REQUEST_NEW_FIREBASE_TOKEN',
+        promiseId: currentPromiseId
+      }, '*');
+    } else {
+      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
+      delete pendingTokenPromises[currentPromiseId];
+    }
+    return promise;
+  };
+})();</script><script>
+let realOriginalGetUserMedia = null;
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+}
+
+(function() {
+  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
+    try {
+      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
+        get: function() {
+          return undefined; // Or throw an error
+        },
+        configurable: false
+      });
+    } catch (error) {
+      console.error("Error defining prototype getter:", error);
+    }
+  }
+})();
+
+(function() {
+  const pendingMediaResolvers = {};
+  let nextMediaPromiseId = 0;
+
+  function requestMediaPermissions(constraints) {
+    const mediaPromiseId = nextMediaPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingMediaResolvers[mediaPromiseId] = (granted) => {
+        delete pendingMediaResolvers[mediaPromiseId];
+        resolve(granted);
+      };
+    });
+
+    window.parent.postMessage({
+      type: 'requestMediaPermission',
+      constraints: constraints,
+      promiseId: mediaPromiseId,
+    }, '*');
+
+    return promise;
+  }
+
+  let originalGetUserMedia = realOriginalGetUserMedia;
+
+  function interceptGetUserMedia() {
+    if (navigator.mediaDevices) {
+      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
+        value: function(constraints) {
+          return requestMediaPermissions(constraints).then((granted) => {
+            if (granted) {
+              if (originalGetUserMedia) {
+                return originalGetUserMedia(constraints);
+              } else {
+                throw new Error("Original getUserMedia not available.");
+              }
+            } else {
+              throw new DOMException('Permission denied', 'NotAllowedError');
+            }
+          });
+        },
+        writable: false,
+        configurable: false
+      });
+    }
+  }
+
+  interceptGetUserMedia();
+
+  const observer = new MutationObserver(function(mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'childList' && mutation.addedNodes) {
+        mutation.addedNodes.forEach(node => {
+          if (node === navigator.mediaDevices) {
+            interceptGetUserMedia();
+          }
+        });
+      }
+    }
+  });
+
+  function interceptSpeechRecognition() {
+    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+      return;
+    }
+
+    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const SpeechRecognitionWrapper = function(...args) {
+      const recognizer = new OriginalSpeechRecognition(...args);
+      const originalStart = recognizer.start.bind(recognizer);
+
+      recognizer.start = function() {
+        requestMediaPermissions({ audio: true }).then(granted => {
+          if (granted) {
+            originalStart();
+          } else {
+            const errorEvent = new SpeechRecognitionErrorEvent('error');
+            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
+            recognizer.dispatchEvent(errorEvent);
+          }
+        });
+      };
+
+      return recognizer;
+    };
+
+    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
+    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
+
+    if (window.SpeechRecognition) {
+      window.SpeechRecognition = SpeechRecognitionWrapper;
+    }
+    if (window.webkitSpeechRecognition) {
+      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
+    }
+  }
+
+  interceptSpeechRecognition();
+
+  window.addEventListener('message', function(event) {
+    if (event.data) {
+      if (event.data.type === 'resolveMediaPermission') {
+        const { promiseId, granted } = event.data;
+        if (pendingMediaResolvers[promiseId]) {
+          pendingMediaResolvers[promiseId](granted);
+        }
+      }
+    }
+  });
+
+})();</script><script>((function(modelInformation) {
+  const originalFetch = window.fetch;
+  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
+  let googleLlmBaseApiUrls = [
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
+  ];
+  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+    );
+  });
+
+  const pendingFetchResolvers = {};
+  let nextPromiseId = 0;
+
+  function handleStringInput(input, optionsArgument) {
+    const actualUrl = input;
+    const fetchCallArgs = [actualUrl, optionsArgument];
+    const effectiveOptions = optionsArgument || {};
+    const bodyForApiKeyCheck = effectiveOptions.body;
+    const bodyForPostMessage = effectiveOptions.body;
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  function handleRequestInput(input, optionsArgument) {
+    const actualUrl = input.url;
+    const fetchCallArgs = [input, optionsArgument];
+    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (optionsArgument) {
+      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
+      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
+      if ('body' in optionsArgument) {
+        bodyForApiKeyCheck = optionsArgument.body;
+        bodyForPostMessage = optionsArgument.body;
+      } else {
+        bodyForApiKeyCheck = undefined;
+        bodyForPostMessage = input.body;
+      }
+    } else {
+      bodyForApiKeyCheck = undefined;
+      bodyForPostMessage = input.body;
+    }
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  window.fetch = function(input, optionsArgument) {
+    let actualUrl;
+    let fetchCallArgs;
+    let effectiveOptions = {};
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (typeof input === 'string') {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
+    } else if (input instanceof Request) {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
+    } else {
+      return originalFetch.apply(window, [input, optionsArgument]);
+    }
+
+    effectiveOptions.method = effectiveOptions.method || 'GET';
+    if (!effectiveOptions.headers) {
+      effectiveOptions.headers = new Headers();
+    }
+
+
+    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
+      let apiKeyIsNull = true;
+
+      const regex = new RegExp("models/([^:]+)");
+      const modelNameMatch = actualUrl.match(regex);
+      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
+
+
+      try {
+        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
+        const apiKeyParam = urlObject.searchParams.get('key');
+        if (apiKeyParam) {
+          apiKeyIsNull = false;
+        }
+      } catch (e) {
+        // Continue checks even if URL parsing fails
+      }
+
+      if (apiKeyIsNull && effectiveOptions.headers) {
+        const h = new Headers(effectiveOptions.headers);
+        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
+        if (apiKeyHeaderValue) {
+          apiKeyIsNull = false;
+          return originalFetch.apply(window, fetchCallArgs);
+        }
+      }
+
+      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
+        try {
+          const bodyData = JSON.parse(bodyForApiKeyCheck);
+          if (bodyData && bodyData.apiKey) {
+            apiKeyIsNull = false;
+            return originalFetch.apply(window, fetchCallArgs);
+          }
+        } catch (e) {
+          // Ignore JSON parsing errors
+        }
+      }
+
+      if(apiKeyIsNull) {
+        const promiseId = nextPromiseId++;
+        const promise = new Promise((resolve) => {
+          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
+            delete pendingFetchResolvers[promiseId];
+            resolve(resolvedResponse);
+          };
+        });
+
+        let serializedBodyForPostMessage;
+        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
+            serializedBodyForPostMessage = bodyForPostMessage;
+        } else if (bodyForPostMessage instanceof ReadableStream) {
+            serializedBodyForPostMessage = null;
+        } else {
+            try {
+                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
+            } catch (e) {
+                serializedBodyForPostMessage = null;
+            }
+        }
+
+        const messageOptions = {
+            method: effectiveOptions.method,
+            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
+            body: serializedBodyForPostMessage
+        };
+
+        window.parent.postMessage({
+          type: 'requestFetch',
+          url: actualUrl,
+          modelName: modelName,
+          options: messageOptions,
+          promiseId: promiseId,
+        }, '*');
+
+        return promise;
+      }
+      return originalFetch.apply(window, fetchCallArgs);
+    }
+    return originalFetch.apply(window, fetchCallArgs);
+  };
+
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'resolveFetch') {
+      const { promiseId, response } = event.data;
+      if (pendingFetchResolvers[promiseId]) {
+        try {
+          const reconstructedResponse = new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: new Headers(response.headers),
+          });
+          pendingFetchResolvers[promiseId](reconstructedResponse);
+        } catch (error) {
+          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
+        }
+      }
+    }
+  });
+
+}))({"textModelName":"gemini-2.5-flash-preview-04-17","imageModelName":"imagen-3.0-generate-002","imageEditModelName":"gemini-2.0-flash-preview-image-generation","videoModelName":"veo-2.0-generate-001","deprecatedTextModelNames":["gemini-2.0-flash"]})</script><script>(function() {
+  const originalConsoleLog = console.log;
+  const originalConsoleError = console.error;
+
+    /**
+   * Normalizes an error event or a promise rejection reason into a structured error object.
+   * @param {*} errorEventOrReason The error object or reason.
+   * @return {object} Structured error data { message, name, stack }.
+   */
+  function getErrorObject(errorEventOrReason) {
+    if (errorEventOrReason instanceof Error) {
+      return {
+        message: errorEventOrReason.message,
+        name: errorEventOrReason.name,
+        stack: errorEventOrReason.stack,
+      };
+    }
+    // Fallback for non-Error objects.
+    try {
+      return {
+        message: JSON.stringify(errorEventOrReason),
+        name: 'UnknownErrorType',
+        stack: null,
+      };
+    } catch (e) {
+      return {
+        message: String(errorEventOrReason),
+        name: 'UnknownErrorTypeNonStringifiable',
+        stack: null,
+      };
+    }
+  }
+
+  /**
+   * Converts an array of arguments (from log/error) into a single string.
+   * Handles Error objects specially to include their message and stack.
+   * @param {Array<*>} args - Arguments passed to console methods.
+   * @return {string} A string representation of the arguments.
+   */
+  function stringifyArgs(args) {
+    return args
+      .map((arg) => {
+        if (arg instanceof Error) {
+          const {message, stack} = arg;
+          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
+        }
+        if (typeof arg === 'object' && arg !== null) {
+          try {
+            return JSON.stringify(arg);
+          } catch (error) {
+            return '[Circular Object]';
+          }
+        } else {
+          return String(arg);
+        }
+      })
+      .join(' ');
+  }
+
+  console.log = function(...args) {
+    const logString = stringifyArgs(args);
+    window.parent.postMessage({ type: 'log', message: logString }, '*');
+    originalConsoleLog.apply(console, args);
+  };
+
+  console.error = function(...args) {
+    let errorData;
+    if (args.length > 0 && args[0] instanceof Error) {
+      const err = args[0];
+      // If the first arg is an Error, capture its details.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        ...getErrorObject(err),
+        rawArgsString: stringifyArgs(args.slice(1)),
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // If not an Error object, treat all args as a general error message.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        message: stringifyArgs(args),
+        name: 'ConsoleLoggedError',
+        stack: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+    window.parent.postMessage(errorData, '*');
+    originalConsoleError.apply(console, args);
+  };
+
+  // Listen for global unhandled synchronous errors.
+  window.addEventListener('error', function(event) {
+    const errorDetails = event.error ? getErrorObject(event.error) : {
+      message: event.message,
+      name: 'GlobalError',
+      stack: null,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    };
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'global',
+      ...errorDetails,
+      message: errorDetails.message || event.message,
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+  // Listen for unhandled promise rejections (asynchronous errors).
+  window.addEventListener('unhandledrejection', function(event) {
+    const errorDetails = getErrorObject(event.reason);
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'unhandledrejection',
+      ...errorDetails,
+      message: errorDetails.message || 'Unhandled Promise Rejection',
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>근무 기록 스프레드시트 (직원별 일별 2개 카테고리)</title>
+    <!-- Google Font Noto Sans KR import -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght400;700&amp;display=swap" rel="stylesheet">
+    <!-- PWA Manifest file connection (for app-like usage) -->
+    <link rel="manifest" href="manifest.json">
+    <!-- Google AdSense 기본 코드 시작 -->
+    <script async="" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9471404163603833" crossorigin="anonymous" data-checked-head="true"></script>
+    <!-- Google AdSense 기본 코드 끝 -->
+    <style>
+        /* 기본 바디 스타일 설정 */
+        body {
+            font-family: 'Noto Sans KR', sans-serif; /* Noto Sans KR 폰트 적용 */
+            margin: 20px; /* 페이지 여백 설정 */
+            background-color: #f0f2f5; /* 배경색 설정 */
+            display: flex; /* Flexbox를 사용하여 중앙 정렬 */
+            flex-direction: column; /* 세로 방향 정렬 */
+            align-items: center; /* 가로 중앙 정렬 */
+            min-height: 95vh; /* 최소 높이 설정 */
+        }
+
+        h1 {
+            color: #333; /* 제목 색상 */
+            margin-bottom: 20px; /* 제목 아래 여백 */
+        }
+
+        /* 월/년도 선택 및 사용자 ID 섹션 */
+        .controls-container {
+            background-color: #fff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: flex; /* 기본적으로 flex로 설정 */
+            flex-wrap: wrap; /* 작은 화면에서 줄바꿈 */
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+
+            /* 스크롤 시 상단에 고정 */
+            position: sticky; /* 또는 fixed */
+            top: 0;
+            z-index: 1000; /* 다른 요소 위에 표시되도록 */
+            width: calc(100% - 40px); /* body margin 20px * 2 제외 */
+            max-width: 1200px; /* employee-section의 max-width와 동일하게 설정 */
+        }
+
+        .controls-container label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .controls-container select, .controls-container input[type="text"], .controls-container input[type="password"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        .user-info {
+            font-size: 0.9em;
+            color: #777;
+            text-align: center;
+            width: 100%; /* 전체 너비 차지 */
+        }
+
+        /* 자동 저장 상태 메시지 */
+        #save-status {
+            font-size: 0.9em;
+            color: #007bff; /* 파란색 */
+            font-weight: bold;
+            margin-left: 15px;
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0; /* 기본적으로 숨김 */
+            min-width: 80px; /* 메시지 공간 확보 */
+            text-align: left;
+        }
+
+        #save-status.visible {
+            opacity: 1; /* 보일 때 */
+        }
+
+        #save-status.success {
+            color: #28a745; /* 초록색 */
+        }
+
+        #save-status.error {
+            color: #dc3545; /* 빨간색 */
+        }
+
+        /* 로그인/회원가입 컨테이너 */
+        .auth-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 90%;
+            max-width: 400px;
+            align-items: center;
+        }
+
+        .auth-container input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        .auth-container button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .auth-container button:hover {
+            background-color: #0056b3;
+        }
+
+        /* 직원 섹션 스타일 */
+        .employee-section {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            padding: 20px;
+            width: 90%; /* 너비 조정 */
+            max-width: 1200px; /* 2개 카테고리 항목으로 인해 너비 증가 */
+            overflow-x: auto; /* 내용이 넘치면 스크롤 */
+        }
+
+        .employee-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        /* 테이블 기본 스타일 */
+        table {
+            width: 100%; /* 부모 섹션 너비에 맞춤 */
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        /* 테이블 헤더 및 데이터 셀 스타일 */
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px 10px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        /* 테이블 헤더 스타일 */
+        th {
+            background-color: #e0e0e0;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* 입력, 선택 상자 기본 스타일 */
+        td input[type="number"],
+        td select {
+            width: 60px; /* 고정 너비로 조정 */
+            padding: 4px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            text-align: center;
+            font-size: 0.9em;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-color: #fff;
+        }
+
+        td select {
+            width: 90px; /* 카테고리 드롭다운 너비 조정 */
+        }
+
+        /* 코멘트 입력 필드 스타일 */
+        td input[type="text"].comment-input {
+            width: 120px; /* 코멘트 필드 너비 조정 */
+            text-align: left;
+            padding-left: 8px;
+        }
+
+        /* 일별 TOTAL 열 강조 */
+        td.daily-total-cell input {
+            font-weight: bold;
+            background-color: #f0f0f0;
+        }
+
+        /* 월별 총합 행 강조 */
+        .monthly-summary-row td {
+            font-weight: bold;
+            background-color: #f5f5f5;
+        }
+
+        .monthly-grand-total-cell input {
+            font-weight: bold;
+            background-color: #e6ffe6 !important; /* 연한 초록색 배경 */
+            color: #007700 !important; /* 진한 초록색 글자 */
+        }
+
+        /* 이월/잔여 시간 필드 스타일 */
+        .carryover-row td {
+            background-color: #e0f0ff; /* 연한 파란색 */
+            font-weight: bold;
+        }
+
+        .carryover-row input {
+            background-color: #e0f0ff !important;
+            font-weight: bold;
+        }
+
+        .remaining-row td {
+            background-color: #fff0e0; /* 연한 주황색 */
+            font-weight: bold;
+        }
+
+        .remaining-row input {
+            background-color: #fff0e0 !important;
+            font-weight: bold;
+        }
+
+        /* 잔여시간 음수일 때 텍스트 색상 빨갛게 */
+        .current-remaining-time-output.negative { /* 클래스 선택자 변경 */
+            color: red;
+            font-weight: bold;
+        }
+
+        /* 다운로드 버튼 스타일 */
+        .download-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 20px; /* 기존 마진 유지 */
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .download-button:hover {
+            background-color: #45a049;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* controls-container 내 버튼 스타일 조정 */
+        .controls-container .download-button {
+            margin-top: 0; /* controls-container 내에서는 상단 마진 제거 */
+            margin-left: 10px; /* 다른 컨트롤과의 간격 */
+        }
+
+        /* 일별 행 배경색 (카테고리별) */
+        tr.daily-entry-row.night td { background-color: #e0f2ff; } /* 야간: 연한 하늘색 */
+        tr.daily-entry-row.leave td { background-color: #fff0e6; } /* 조퇴: 연한 주황 */
+        tr.daily-entry-row.ot td { background-color: #e6ffe6; }   /* OT: 연한 초록 */
+        tr.daily-entry-row.late_start td { background-color: #f0e6ff; } /* 늦출: 연한 보라 */
+        tr.daily-entry-row.null td { background-color: #fff; } /* 기본: 흰색 */
+
+        /* 광고 컨테이너 스타일 */
+        #ad-container {
+            display: none; /* 기본적으로 숨김 */
+            margin-bottom: 20px;
+            text-align: center;
+            background-color: #e0e0e0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        #ad-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+    </style>
+<meta http-equiv="origin-trial" content="AlK2UR5SkAlj8jjdEc9p3F3xuFYlF6LYjAML3EOqw1g26eCwWPjdmecULvBH5MVPoqKYrOfPhYVL71xAXI1IBQoAAAB8eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="Amm8/NmvvQfhwCib6I7ZsmUxiSCfOxWxHayJwyU1r3gRIItzr7bNQid6O8ZYaE1GSQTa69WwhPC9flq/oYkRBwsAAACCeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="A9wSqI5i0iwGdf6L1CERNdmsTPgVu44ewj8QxTBYgsv1LCPUVF7YmWOvTappqB1139jAymxUW/RO8zmMqo4zlAAAAACNeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiRmxlZGdlQmlkZGluZ0FuZEF1Y3Rpb25TZXJ2ZXIiLCJleHBpcnkiOjE3MzY4MTI4MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A+d7vJfYtay4OUbdtRPZA3y7bKQLsxaMEPmxgfhBGqKXNrdkCQeJlUwqa6EBbSfjwFtJWTrWIioXeMW+y8bWAgQAAACTeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiRmxlZGdlQmlkZGluZ0FuZEF1Y3Rpb25TZXJ2ZXIiLCJleHBpcnkiOjE3MzY4MTI4MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><script src="https://apis.google.com/js/api.js?onload=__iframefcb396478" type="text/javascript" charset="UTF-8" gapi_processed="true"></script></head>
+<body>
+    <h1>직원별 월간 근무 기록 스프레드시트</h1>
+
+    <!-- 로그인 / 회원가입 섹션 -->
+    <div class="auth-container" id="auth-section" style="display: none;">
+        <h2>로그인 / 회원가입</h2>
+        <input type="text" id="auth-email" placeholder="이메일">
+        <input type="password" id="auth-password" placeholder="비밀번호">
+        <button id="register-button">회원가입</button>
+        <button id="login-button">로그인</button>
+        <button id="reset-password-button" style="background-color: #6c757d;">비밀번호 찾기</button>
+        <p id="auth-message" style="color: green;">로그인 성공!</p>
+    </div>
+
+    <!-- 월/년도 선택 및 사용자 ID 섹션 (로그인 후 표시) -->
+    <div class="controls-container" id="main-controls" style="display: flex;">
+        <label for="year-select">년도:</label>
+        <select id="year-select"><option value="2020">2020년</option><option value="2021">2021년</option><option value="2022">2022년</option><option value="2023">2023년</option><option value="2024">2024년</option><option value="2025">2025년</option><option value="2026">2026년</option><option value="2027">2027년</option><option value="2028">2028년</option><option value="2029">2029년</option><option value="2030">2030년</option><option value="2031">2031년</option><option value="2032">2032년</option><option value="2033">2033년</option><option value="2034">2034년</option><option value="2035">2035년</option><option value="2036">2036년</option><option value="2037">2037년</option><option value="2038">2038년</option><option value="2039">2039년</option><option value="2040">2040년</option><option value="2041">2041년</option><option value="2042">2042년</option><option value="2043">2043년</option><option value="2044">2044년</option><option value="2045">2045년</option><option value="2046">2046년</option><option value="2047">2047년</option><option value="2048">2048년</option><option value="2049">2049년</option><option value="2050">2050년</option></select>
+        <label for="month-select">월:</label>
+        <select id="month-select"><option value="1">1월</option><option value="2">2월</option><option value="3">3월</option><option value="4">4월</option><option value="5">5월</option><option value="6">6월</option><option value="7">7월</option><option value="8">8월</option><option value="9">9월</option><option value="10">10월</option><option value="11">11월</option><option value="12">12월</option></select>
+        <label for="employee-select">직원 선택:</label>
+        <select id="employee-select"><option value="1">윤희원</option><option value="2">직원2</option><option value="3">직원3</option><option value="4">직원4</option><option value="5">직원5</option><option value="6">직원6</option><option value="7">직원7</option><option value="8">직원8</option><option value="9">직원9</option><option value="10">직원10</option><option value="11">직원11</option><option value="12">직원12</option><option value="13">직원13</option><option value="14">직원14</option><option value="15">직원15</option><option value="16">직원16</option><option value="17">직원17</option><option value="18">직원18</option><option value="19">직원19</option><option value="20">직원20</option><option value="21">직원21</option><option value="22">직원22</option><option value="23">직원23</option><option value="24">직원24</option><option value="25">직원25</option><option value="26">직원26</option><option value="27">직원27</option></select>
+        <div class="user-info">사용자 ID: <span id="user-id-display">Xf0yv9ZM2gS27TMTDjVPSNuSVkf1</span></div>
+        <button id="logout-button" style="background-color: #dc3545; margin-left: 10px;">로그아웃</button>
+        <!-- 자동 저장 상태 메시지 -->
+        <span id="save-status"></span>
+    </div>
+
+    <!-- 광고 영역 (무료 버전 사용자에게만 표시) -->
+    <div id="ad-container" style="display: none;">
+        <p style="font-weight: bold; color: #555;">광고 영역</p>
+        <!-- Google AdSense 광고 단위 코드 시작 -->
+        <ins class="adsbygoogle" style="display: block; width: auto; height: auto;" data-ad-client="ca-pub-9471404163603833" data-ad-slot="YOUR_AD_SLOT_ID" data-adsbygoogle-status="done"><div id="aswift_1_host" style="border: none; height: 0px; width: 0px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block;"><iframe id="aswift_1" name="aswift_1" browsingtopics="true" style="left:0;position:absolute;top:0;border:0;width:0px;height:0px;min-height:auto;max-height:none;min-width:auto;max-width:none;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" width="0" height="0" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="https://googleads.g.doubleclick.net/pagead/ads?client=ca-pub-9471404163603833&amp;output=html&amp;h=0&amp;slotname=YOUR_AD_SLOT_ID&amp;adk=1631544229&amp;adf=617335072&amp;pi=t.ma~as.YOUR_AD_SLOT_ID&amp;w=0&amp;abgtt=6&amp;rafmt=12&amp;format=0x0&amp;url=https%3A%2F%2Fgemini.google.com&amp;wgl=1&amp;uach=WyJBbmRyb2lkIiwiMTUuMC4wIiwiIiwiU00tUzkzNk4iLCIxMzcuMC43MTUxLjExNSIsbnVsbCwxLG51bGwsIiIsW1siR29vZ2xlIENocm9tZSIsIjEzNy4wLjcxNTEuMTE1Il0sWyJDaHJvbWl1bSIsIjEzNy4wLjcxNTEuMTE1Il0sWyJOb3QvQSlCcmFuZCIsIjI0LjAuMC4wIl1dLDBd&amp;dt=1751639142507&amp;bpp=1&amp;bdt=404&amp;idt=384&amp;shv=r20250630&amp;mjsv=m202507010101&amp;ptt=9&amp;saldr=aa&amp;prev_fmts=0x0&amp;nras=1&amp;correlator=2009842470076&amp;frm=8&amp;ife=1&amp;pv=1&amp;nhd=1&amp;u_tz=540&amp;u_his=1&amp;u_h=833&amp;u_w=385&amp;u_ah=833&amp;u_aw=385&amp;u_cd=24&amp;u_sd=3.75&amp;dmc=8&amp;adx=-12245933&amp;ady=-12245933&amp;biw=-12245933&amp;bih=-12245933&amp;isw=980&amp;ish=1925&amp;ifk=2244268612&amp;scr_x=-12245933&amp;scr_y=-12245933&amp;eid=31093235%2C95353387%2C95362655%2C95365225%2C95365461%2C95365111%2C95359265%2C95365118%2C95365798&amp;oid=2&amp;pvsid=4064293090739587&amp;tmod=865737609&amp;uas=0&amp;nvt=1&amp;usrc=1&amp;brdim=0%2C0%2C0%2C0%2C385%2C0%2C384%2C699%2C980%2C1925&amp;vis=1&amp;rsz=%7C%7Cen%7C&amp;abl=CS&amp;fu=256&amp;bc=31&amp;bz=1&amp;td=1&amp;tdf=2&amp;psd=W251bGwsbnVsbCxudWxsLDNd&amp;nt=1&amp;ifi=2&amp;uci=2.mt2c4864icub&amp;fsb=1&amp;dtd=408" data-google-container-id="2.mt2c4864icub" tabindex="0" title="Advertisement" aria-label="Advertisement" data-load-complete="true"></iframe></div></ins>
+        <script>
+             // 이 스크립트는 해당 ins 태그 바로 뒤에서 한 번만 실행됩니다.
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+        <!-- Google AdSense 광고 단위 코드 끝 -->
+        <p style="font-size: 0.8em; color: #777; margin-top: 5px;">프리미엄 구독 시 광고 제거</p>
+    </div>
+
+    <!-- 직원 섹션 컨테이너 (로그인 후 표시) -->
+    <div id="employee-sheets-container" style="display: block;"><div class="employee-section" data-employee-id="1">
+                <div class="employee-name">
+                    <input type="text" class="employee-name-input" data-employee-id="1" value="직원1"> 님
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>날짜</th>
+                            <th>카테고리 1</th>
+                            <th>total 1</th>
+                            <th>X 1.5 1</th>
+                            <th>카테고리 2</th>
+                            <th>total 2</th>
+                            <th>X 1.5 2</th>
+                            <th>일별 TOTAL</th>
+                            <th>코멘트</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employee-table-body-1">
+                        <!-- 일별 행은 아래 for 루프에서 동적으로 추가됩니다. -->
+                    
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="1">
+                        <td>1일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="1" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="1" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="1" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="1" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="1" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="1" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="1" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="1" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="2">
+                        <td>2일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="2" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="2" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="2" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="2" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="2" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="2" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="2" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="2" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row 야간" data-employee-id="1" data-day="3">
+                        <td>3일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="3" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="3" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="3" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="3" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="3" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="3" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="3" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="3" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="4">
+                        <td>4일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="4" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="4" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="4" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="4" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="4" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="4" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="4" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="4" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="5">
+                        <td>5일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="5" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="5" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="5" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="5" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="5" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="5" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="5" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="5" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="6">
+                        <td>6일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="6" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="6" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="6" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="6" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="6" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="6" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="6" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="6" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="7">
+                        <td>7일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="7" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="7" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="7" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="7" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="7" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="7" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="7" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="7" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="8">
+                        <td>8일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="8" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="8" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="8" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="8" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="8" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="8" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="8" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="8" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="9">
+                        <td>9일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="9" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="9" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="9" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="9" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="9" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="9" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="9" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="9" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="10">
+                        <td>10일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="10" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="10" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="10" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="10" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="10" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="10" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="10" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="10" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="11">
+                        <td>11일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="11" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="11" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="11" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="11" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="11" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="11" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="11" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="11" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="12">
+                        <td>12일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="12" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="12" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="12" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="12" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="12" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="12" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="12" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="12" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="13">
+                        <td>13일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="13" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="13" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="13" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="13" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="13" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="13" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="13" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="13" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="14">
+                        <td>14일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="14" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="14" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="14" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="14" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="14" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="14" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="14" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="14" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="15">
+                        <td>15일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="15" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="15" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="15" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="15" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="15" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="15" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="15" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="15" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="16">
+                        <td>16일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="16" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="16" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="16" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="16" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="16" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="16" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="16" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="16" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="17">
+                        <td>17일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="17" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="17" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="17" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="17" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="17" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="17" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="17" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="17" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="18">
+                        <td>18일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="18" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="18" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="18" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="18" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="18" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="18" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="18" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="18" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="19">
+                        <td>19일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="19" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="19" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="19" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="19" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="19" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="19" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="19" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="19" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="20">
+                        <td>20일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="20" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="20" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="20" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="20" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="20" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="20" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="20" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="20" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="21">
+                        <td>21일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="21" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="21" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="21" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="21" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="21" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="21" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="21" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="21" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="22">
+                        <td>22일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="22" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="22" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="22" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="22" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="22" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="22" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="22" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="22" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="23">
+                        <td>23일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="23" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="23" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="23" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="23" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="23" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="23" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="23" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="23" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="24">
+                        <td>24일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="24" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="24" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="24" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="24" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="24" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="24" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="24" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="24" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="25">
+                        <td>25일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="25" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="25" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="25" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="25" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="25" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="25" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="25" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="25" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="26">
+                        <td>26일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="26" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="26" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="26" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="26" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="26" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="26" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="26" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="26" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="27">
+                        <td>27일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="27" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="27" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="27" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="27" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="27" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="27" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="27" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="27" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="28">
+                        <td>28일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="28" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="28" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="28" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="28" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="28" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="28" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="28" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="28" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="29">
+                        <td>29일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="29" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="29" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="29" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="29" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="29" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="29" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="29" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="29" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="30">
+                        <td>30일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="30" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="30" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="30" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="30" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="30" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="30" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="30" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="30" placeholder="코멘트 입력"></td>
+                    </tr>
+                
+                    <tr class="daily-entry-row null" data-employee-id="1" data-day="31">
+                        <td>31일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="31" data-entry="1">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="31" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="31" data-entry="1" value="0" readonly=""></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="1" data-day="31" data-entry="2">
+                                <option value="null"></option><option value="야간">야간</option><option value="조퇴">조퇴</option><option value="OT">OT</option><option value="늦출">늦출</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="1" data-day="31" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="1" data-day="31" data-entry="2" value="0" readonly=""></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="1" data-day="31" value="0" readonly=""></td>
+                        <td><input type="text" class="comment-input" data-employee-id="1" data-day="31" placeholder="코멘트 입력"></td>
+                    </tr>
+                </tbody>
+                </table>
+                <!-- 월별 요약 정보 (이월, 잔여, 총합) -->
+                <table style="margin-top: 15px;">
+                    <tbody><tr class="carryover-row">
+                        <td colspan="2" style="text-align: right;">이월 시간 (이전 달):</td>
+                        <td><input type="number" class="calc-output previous-carry-over-input" data-employee-id="1" value="0" readonly=""></td>
+                        <td colspan="6"></td> <!-- 빈 셀, colspan 조정 -->
+                    </tr>
+                    <tr class="monthly-summary-row">
+                        <td colspan="2" style="text-align: right;">월별 총합:</td>
+                        <td class="monthly-grand-total-cell">
+                            <input type="number" class="calc-output monthly-grand-total-output" data-employee-id="1" value="0" readonly="" style="width: 100%;">
+                        </td>
+                        <td colspan="6"></td> <!-- 빈 셀, colspan 조정 -->
+                    </tr>
+                    <tr class="remaining-row">
+                        <td colspan="2" style="text-align: right;">잔여 시간 (다음 달 이월):</td>
+                        <td><input type="number" class="calc-output current-remaining-time-output" data-employee-id="1" value="0" readonly=""></td>
+                        <td colspan="6"></td> <!-- 빈 셀, colspan 조정 -->
+                    </tr>
+                </tbody></table>
+            </div></div>
+
+    <!-- 다운로드 버튼 (HTML 다운로드는 그대로 하단에 유지, 로그인 후 표시) -->
+    <button id="downloadHtmlButton" class="download-button" style="display: block;">HTML로 다운로드</button>
+
+    <script type="module">
+        // Firebase SDK 임포트 (CDN 사용)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase 설정 (사용자가 제공한 Firebase 설정으로 교체)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBcCFsJBaa8nHOTbBJCc_2aiFh-9xbsZt8",
+            authDomain: "sample-firebase-ai-app-ae6d0.firebaseapp.com",
+            projectId: "sample-firebase-ai-app-ae6d0",
+            storageBucket: "sample-firebase-ai-app-ae6d0.firebasestorage.app",
+            messagingSenderId: "618369699169",
+            appId: "1:618369699169:web:e2f78667c8f743b20b4920"
+        };
+        const appId = firebaseConfig.appId; // 제공된 config에서 appId 사용
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // Firebase 앱 초기화
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let currentUserId = null; // 현재 사용자 ID
+        let currentYear = new Date().getFullYear();
+        let currentMonth = new Date().getMonth() + 1; // 0부터 시작하므로 +1
+        let currentEmployeeId = '1'; // 현재 선택된 직원 ID (기본값 1)
+        let currentRole = 'user'; // 기본 역할: user (일반 사용자)
+
+        // DOM 요소들
+        const authSection = document.getElementById('auth-section');
+        const mainControls = document.getElementById('main-controls');
+        const employeeSheetsContainer = document.getElementById('employee-sheets-container');
+        const downloadHtmlButton = document.getElementById('downloadHtmlButton');
+        const authEmailInput = document.getElementById('auth-email');
+        const authPasswordInput = document.getElementById('auth-password');
+        const registerButton = document.getElementById('register-button');
+        const loginButton = document.getElementById('login-button');
+        const resetPasswordButton = document.getElementById('reset-password-button');
+        const logoutButton = document.getElementById('logout-button');
+        const authMessage = document.getElementById('auth-message');
+        let saveStatusElement = null; // DOMContentLoaded에서 초기화됨
+        const adContainer = document.getElementById('ad-container'); // 광고 컨테이너 요소
+
+        // 자동 저장 관련 변수
+        let saveTimer = null;
+        const SAVE_DELAY = 5000; // 5초 후 자동 저장 (2초에서 5초로 변경)
+
+        // --- Firebase 인증 핸들러 ---
+        registerButton.addEventListener('click', async () => {
+            const email = authEmailInput.value;
+            const password = authPasswordInput.value;
+            if (!email || !password) {
+                authMessage.textContent = '이메일과 비밀번호를 입력해주세요.';
+                return;
+            }
+            try {
+                // 회원가입 시에는 기본적으로 로컬 지속성 사용 (초기 설정이므로 변경하지 않음)
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                // 새 사용자 등록 시 기본 역할은 'user'
+                await setDoc(doc(db, `artifacts/${appId}/users/${user.uid}/user_roles`, user.uid), {
+                    email: user.email,
+                    role: 'user' // 새 사용자의 기본 역할
+                });
+                authMessage.textContent = '회원가입 성공! 로그인해주세요.';
+                authMessage.style.color = 'green';
+            } catch (error) {
+                console.error("회원가입 실패:", error);
+                // 일반적인 Firebase Auth 오류를 한글로 번역
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        authMessage.textContent = '회원가입 실패: 이미 사용 중인 이메일입니다.';
+                        break;
+                    case 'auth/invalid-email':
+                        authMessage.textContent = '회원가입 실패: 유효하지 않은 이메일 형식입니다.';
+                        break;
+                    case 'auth/weak-password':
+                        authMessage.textContent = '회원가입 실패: 비밀번호는 6자 이상이어야 합니다.';
+                        break;
+                    case 'auth/operation-not-allowed':
+                        authMessage.textContent = '회원가입 실패: 이메일/비밀번호 로그인이 활성화되지 않았습니다. Firebase 콘솔을 확인해주세요.';
+                        break;
+                    default:
+                        authMessage.textContent = `회원가입 실패: ${error.message}`;
+                }
+                authMessage.style.color = 'red';
+            }
+        });
+
+        loginButton.addEventListener('click', async () => {
+            const email = authEmailInput.value;
+            const password = authPasswordInput.value;
+            if (!email || !password) {
+                authMessage.textContent = '이메일과 비밀번호를 입력해주세요.';
+                return;
+            }
+            try {
+                // 로그인 시 세션 지속성을 browserSessionPersistence로 설정
+                await setPersistence(auth, browserSessionPersistence);
+                await signInWithEmailAndPassword(auth, email, password);
+                authMessage.textContent = '로그인 성공!';
+                authMessage.style.color = 'green';
+            } catch (error) {
+                console.error("로그인 실패:", error);
+                // 일반적인 Firebase Auth 오류를 한글로 번역
+                switch (error.code) {
+                    case 'auth/invalid-credential': // 잘못된 이메일/비밀번호에 가장 흔함
+                    case 'auth/wrong-password':
+                    case 'auth/user-not-found':
+                        authMessage.textContent = '로그인 실패: 이메일 또는 비밀번호가 올바르지 않습니다.';
+                        break;
+                    case 'auth/invalid-email':
+                        authMessage.textContent = '로그인 실패: 유효하지 않은 이메일 형식입니다.';
+                        break;
+                    case 'auth/user-disabled':
+                        authMessage.textContent = '로그인 실패: 이 계정은 비활성화되었습니다.';
+                        break;
+                    case 'auth/too-many-requests':
+                        authMessage.textContent = '로그인 실패: 너무 많은 로그인 시도가 있었습니다. 잠시 후 다시 시도해주세요.';
+                        break;
+                    case 'auth/operation-not-allowed':
+                        authMessage.textContent = '로그인 실패: 이메일/비밀번호 로그인이 활성화되지 않았습니다. Firebase 콘솔을 확인해주세요.';
+                        break;
+                    default:
+                        authMessage.textContent = `로그인 실패: ${error.message}`;
+                }
+                authMessage.style.color = 'red';
+            }
+        });
+
+        // 비밀번호 또는 이메일 입력 필드에서 Enter 키 눌렀을 때 로그인 트리거
+        authEmailInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                loginButton.click();
+            }
+        });
+
+        authPasswordInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                loginButton.click();
+            }
+        });
+
+        // --- 비밀번호 재설정 핸들러 ---
+        resetPasswordButton.addEventListener('click', async () => {
+            const email = authEmailInput.value;
+            if (!email) {
+                authMessage.textContent = '비밀번호를 재설정할 이메일을 입력해주세요.';
+                authMessage.style.color = 'red';
+                return;
+            }
+            try {
+                await sendPasswordResetEmail(auth, email);
+                authMessage.textContent = '비밀번호 재설정 이메일이 전송되었습니다. 이메일을 확인해주세요.';
+                authMessage.style.color = 'green';
+            } catch (error) {
+                console.error("비밀번호 재설정 실패:", error);
+                switch (error.code) {
+                    case 'auth/invalid-email':
+                        authMessage.textContent = '비밀번호 재설정 실패: 유효하지 않은 이메일 형식입니다.';
+                        break;
+                    case 'auth/user-not-found':
+                        authMessage.textContent = '비밀번호 재설정 실패: 해당 이메일로 등록된 사용자가 없습니다.';
+                        break;
+                    case 'auth/too-many-requests':
+                        authMessage.textContent = '비밀번호 재설정 실패: 너무 많은 요청이 있었습니다. 잠시 후 다시 시도해주세요.';
+                        break;
+                    default:
+                        authMessage.textContent = `비밀번호 재설정 실패: ${error.message}`;
+                }
+                authMessage.style.color = 'red';
+            }
+        });
+
+        // --- 로그아웃 핸들러 ---
+        logoutButton.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                authMessage.textContent = '로그아웃되었습니다.';
+                authMessage.style.color = 'blue';
+                // onAuthStateChanged 리스너가 로그인 화면으로 전환할 것임
+            } catch (error) {
+                console.error("로그아웃 실패:", error);
+                authMessage.textContent = `로그아웃 실패: ${error.message}`;
+                authMessage.style.color = 'red';
+            }
+        });
+
+        // --- Firebase 인증 상태 변경 리스너 ---
+        onAuthStateChanged(auth, async (user) => {
+            console.log("onAuthStateChanged triggered. User:", user); // 디버깅 로그
+            if (user) {
+                console.log("User authenticated. Attempting to show main UI."); // 디버깅 로그
+                currentUserId = user.uid;
+                document.getElementById('user-id-display').textContent = currentUserId;
+
+                // Firestore에서 사용자 역할 가져오기
+                const userRoleDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/user_roles`, currentUserId);
+                let userRoleDocSnap;
+                try {
+                    userRoleDocSnap = await getDoc(userRoleDocRef);
+                } catch (error) {
+                    console.error("사용자 역할 가져오기 오류:", error); // 역할 로딩 오류 로깅
+                    // 역할 로딩 실패 시 기본값으로 'user' 설정
+                    currentRole = 'user';
+                    // UI를 숨기거나 오류 메시지 표시 등 추가 처리 가능
+                    authMessage.textContent = '오류: 사용자 역할 정보를 불러올 수 없습니다. 권한이 제한될 수 있습니다.';
+                    authMessage.style.color = 'orange';
+                    // 오류 발생 시에도 UI를 표시할지 여부 결정 (여기서는 일단 표시하도록 유지)
+                }
+
+                if (userRoleDocSnap && userRoleDocSnap.exists()) {
+                    currentRole = userRoleDocSnap.data().role || 'user';
+                } else if (user) { // 역할 문서가 없으면 생성 시도 (인증된 사용자만)
+                    console.log("사용자 역할 문서가 없습니다. 기본 'user' 역할로 생성합니다.");
+                    currentRole = 'user';
+                    try {
+                        // 새로운 사용자가 자신의 역할 문서를 생성할 수 있도록 허용하는 규칙이 필요합니다.
+                        // allow create: if request.auth != null && request.auth.uid == userRoleId && request.resource.data.role == 'user';
+                        await setDoc(doc(db, `artifacts/${appId}/users/${user.uid}/user_roles`, user.uid), { email: user.email, role: 'user' });
+                    } catch (error) {
+                        console.error("사용자 역할 문서 생성 오류:", error);
+                        authMessage.textContent = '오류: 사용자 역할 문서 생성에 실패했습니다. 권한이 제한될 수 있습니다.';
+                        authMessage.style.color = 'orange';
+                    }
+                }
+
+                // 모든 비동기 작업이 완료될 때까지 기다린 후 UI 표시
+                try {
+                    initializeMonthYearSelectors();
+                    await populateEmployeeSelector(); // 직원 선택 드롭다운 채우기
+                    await loadSelectedEmployeeData(); // 선택된 직원 데이터 로드 및 표시
+                    applyRolePermissions(currentRole);
+
+                    authSection.style.display = 'none';
+                    mainControls.style.display = 'flex';
+                    employeeSheetsContainer.style.display = 'block';
+                    downloadHtmlButton.style.display = 'block';
+
+                    // 광고 표시/숨김 로직
+                    if (adContainer) {
+                        if (currentRole === 'user') {
+                            adContainer.style.display = 'block';
+                            // AdSense 광고는 HTML에 직접 삽입된 <script> 태그를 통해 로드되므로
+                            // 여기서 추가적으로 push() 호출할 필요가 없습니다.
+                            // 만약 광고가 보이지 않는다면, AdSense 계정에서 사이트 승인 여부와
+                            // 광고 단위 설정을 다시 확인해야 합니다.
+                        } else {
+                            adContainer.style.display = 'none';
+                        }
+                    }
+
+                    console.log("모든 비동기 작업 후 메인 UI 표시 속성이 설정되었습니다."); // 디버깅 로그
+                } catch (error) {
+                    console.error("메인 UI 설정 또는 데이터 로딩 중 오류 발생:", error);
+                    authMessage.textContent = `오류 발생: ${error.message}. Firebase 보안 규칙을 확인해주세요.`;
+                    authMessage.style.color = 'red';
+                    // 오류 발생 시 메인 UI 숨기고 로그인 화면 유지
+                    authSection.style.display = 'flex';
+                    mainControls.style.display = 'none';
+                    employeeSheetsContainer.style.display = 'none';
+                    downloadHtmlButton.style.display = 'none';
+                    if (adContainer) adContainer.style.display = 'none'; // 오류 시 광고도 숨김
+                }
+
+            } else {
+                console.log("사용자 인증되지 않음. 로그인 UI 표시."); // 디버깅 로그
+                currentUserId = null;
+                document.getElementById('user-id-display').textContent = '로그인 필요';
+                currentRole = 'user';
+
+                // 메인 애플리케이션 UI 숨기고 로그인 화면 표시
+                authSection.style.display = 'flex';
+                mainControls.style.display = 'none';
+                employeeSheetsContainer.style.display = 'none';
+                downloadHtmlButton.style.display = 'none';
+                if (adContainer) adContainer.style.display = 'none'; // 로그아웃 시 광고도 숨김
+            }
+        });
+
+        // --- 월/년도 선택 드롭다운 초기화 ---
+        function initializeMonthYearSelectors() {
+            const yearSelect = document.getElementById('year-select');
+            const monthSelect = document.getElementById('month-select');
+
+            // 재초기화 시 중복 옵션 방지를 위해 기존 옵션 지우기
+            yearSelect.innerHTML = '';
+            monthSelect.innerHTML = '';
+
+            const currentFullYear = new Date().getFullYear();
+            // 년도 선택 범위를 현재 년도 - 5년부터 2050년까지 또는 현재 년도 + 5년 중 더 큰 값까지 확장
+            for (let i = currentFullYear - 5; i <= Math.max(currentFullYear + 5, 2050); i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i + '년';
+                if (i === currentFullYear) option.selected = true;
+                yearSelect.appendChild(option);
+            }
+
+            for (let i = 1; i <= 12; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i + '월';
+                if (i === (new Date().getMonth() + 1)) option.selected = true;
+                monthSelect.appendChild(option);
+            }
+
+            yearSelect.addEventListener('change', async (event) => {
+                currentYear = parseInt(event.target.value);
+                await loadSelectedEmployeeData(); // 년도 변경 시 선택된 직원 데이터 다시 로드
+                applyRolePermissions(currentRole); // 데이터 로드 후 권한 재적용
+            });
+
+            monthSelect.addEventListener('change', async (event) => {
+                currentMonth = parseInt(event.target.value);
+                await loadSelectedEmployeeData(); // 월 변경 시 선택된 직원 데이터 다시 로드
+                applyRolePermissions(currentRole); // 데이터 로드 후 권한 재적용
+            });
+        }
+
+        // --- 직원 선택 드롭다운 채우기 ---
+        async function populateEmployeeSelector() {
+            const employeeSelect = document.getElementById('employee-select');
+            employeeSelect.innerHTML = ''; // 기존 옵션 지우기
+
+            // 모든 직원 이름 가져오기
+            const employeeNames = {};
+            try {
+                // Firebase Firestore 경로: artifacts/{appId}/employee_metadata
+                const q = query(collection(db, `artifacts/${appId}/employee_metadata`));
+                const querySnapshot = await getDocs(q);
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const empIdMatch = doc.id.match(/^employee_(\d+)$/);
+                    if (empIdMatch) {
+                        employeeNames[empIdMatch[1]] = data.employeeName;
+                    }
+                });
+            } catch (error) {
+                console.error("직원 이름 로드 실패:", error);
+                // 오류 발생 시 기본 이름 사용
+            }
+
+            for (let i = 1; i <= employeeCount; i++) {
+                const option = document.createElement('option');
+                option.value = i.toString();
+                option.textContent = employeeNames[i.toString()] || `직원${i}`; // 저장된 이름이 있으면 사용, 없으면 기본 이름
+                employeeSelect.appendChild(option);
+            }
+            // 초기 선택된 직원 설정
+            employeeSelect.value = currentEmployeeId;
+
+            employeeSelect.addEventListener('change', async () => {
+                await loadSelectedEmployeeData(); // 직원 변경 시 데이터 로드
+            });
+        }
+
+        // --- 선택된 직원 데이터 로드 및 표시 ---
+        async function loadSelectedEmployeeData() {
+            if (!currentUserId) {
+                console.warn("사용자가 인증되지 않았습니다. 선택된 직원 데이터를 로드할 수 없습니다.");
+                return;
+            }
+
+            const employeeSelect = document.getElementById('employee-select');
+            const newEmployeeId = employeeSelect.value;
+
+            // 직원 변경 시 현재 직원의 데이터를 먼저 저장
+            if (currentEmployeeId && currentEmployeeId !== newEmployeeId) {
+                await saveEmployeeMonthlyData(); // 이전에 활성화된 직원의 데이터 저장
+            }
+
+            currentEmployeeId = newEmployeeId; // 현재 직원 ID 업데이트
+
+            // 기존 직원 시트 지우기
+            employeeSheetsContainer.innerHTML = '';
+
+            // 새 직원 시트 생성 및 추가
+            const employeeSection = createEmployeeSection(currentEmployeeId);
+            employeeSheetsContainer.appendChild(employeeSection);
+
+            // 직원 이름 로드 및 설정
+            const employeeNameInput = employeeSection.querySelector('.employee-name-input');
+            // Firebase Firestore 경로: artifacts/{appId}/employee_metadata/{employeeId}
+            const employeeNameDocRef = doc(db, `artifacts/${appId}/employee_metadata`, `employee_${currentEmployeeId}`);
+            try {
+                const employeeNameDocSnap = await getDoc(employeeNameDocRef);
+                if (employeeNameDocSnap.exists()) {
+                    employeeNameInput.value = employeeNameDocSnap.data().employeeName || `직원${currentEmployeeId}`;
+                } else {
+                    employeeNameInput.value = `직원${currentEmployeeId}`; // 문서가 없으면 기본값
+                }
+            } catch (error) {
+                console.error(`직원 이름 로드 실패 (ID: ${currentEmployeeId}):`, error);
+                employeeNameInput.value = `직원${currentEmployeeId}`; // 오류 발생 시 기본값
+            }
+
+
+            // 새로 선택된 직원의 월별 데이터 로드
+            await loadEmployeeMonthlyData(currentEmployeeId);
+
+            // 새로 로드된 직원 시트에 이벤트 리스너 다시 연결
+            attachEmployeeSheetListeners(currentEmployeeId);
+
+            applyRolePermissions(currentRole); // 로드 후 권한 적용
+        }
+
+        // --- Firestore 데이터 로드 함수 (단일 직원용) ---
+        async function loadEmployeeMonthlyData(employeeId) {
+            if (!currentUserId) {
+                console.warn("사용자가 아직 인증되지 않았습니다. 데이터를 로드할 수 없습니다.");
+                return;
+            }
+
+            const section = document.querySelector(`.employee-section[data-employee-id="${employeeId}"]`);
+            if (!section) {
+                console.error(`직원 ID ${employeeId}에 대한 섹션을 찾을 수 없습니다.`);
+                return;
+            }
+
+            // 1. 현재 월의 데이터 로드 (공유 경로 사용)
+            // Firebase Firestore 경로: artifacts/{appId}/shared_records_data/{recordId}
+            const currentMonthDocRef = doc(db, `artifacts/${appId}/shared_records_data`, `${employeeId}_${currentYear}_${currentMonth}`);
+            let currentMonthData = {};
+            try {
+                const currentMonthDocSnap = await getDoc(currentMonthDocRef);
+                if (currentMonthDocSnap.exists()) {
+                    currentMonthData = currentMonthDocSnap.data();
+                    console.log(`직원 ${employeeId} (${currentYear}-${currentMonth})의 데이터가 공유 경로에서 로드됨:`, currentMonthData);
+                } else {
+                    console.log(`직원 ${employeeId} (${currentYear}-${currentMonth})의 데이터가 공유 경로에서 발견되지 않음.`);
+                }
+            } catch (error) {
+                console.error(`직원 ${employeeId}의 현재 월 데이터를 공유 경로에서 로드하는 중 오류 발생:`, error);
+                throw error; // 오류를 상위 호출자로 다시 던져 UI가 숨겨지도록 함
+            }
+
+            // 2. 이전 월의 잔여 시간 (이월 시간) 로드 (공유 경로 사용)
+            let previousMonthCarryOver = 0;
+            const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
+            const prevYear = currentMonth === 1 ? currentYear - 1 : currentYear;
+            // Firebase Firestore 경로: artifacts/{appId}/shared_records_data/{recordId}
+            const previousMonthDocRef = doc(db, `artifacts/${appId}/shared_records_data`, `${employeeId}_${prevYear}_${prevMonth}`);
+            try {
+                const previousMonthDocSnap = await getDoc(previousMonthDocRef);
+                if (previousMonthDocSnap.exists()) {
+                    previousMonthCarryOver = parseFloat(previousMonthDocSnap.data().remainingTime || 0);
+                    console.log(`직원 ${employeeId} (${prevYear}-${prevMonth})의 이전 월 이월 시간 로드됨: ${previousMonthCarryOver}`);
+                } else {
+                    console.log(`직원 ${employeeId} (${prevYear}-${prevMonth})의 이전 월 데이터가 공유 경로에서 발견되지 않음. 이월 시간은 0.`);
+                }
+            } catch (error) {
+                console.error(`직원 ${employeeId}의 이전 월 이월 시간을 공유 경로에서 로드하는 중 오류 발생:`, error);
+                // 이월 시간 로딩 실패는 치명적이지 않을 수 있으므로, 오류를 다시 던지지 않고 기본값 0 유지
+            }
+
+            // UI에 이월 시간 표시
+            const prevCarryOverInput = document.querySelector(`.previous-carry-over-input[data-employee-id="${employeeId}"]`);
+            if (prevCarryOverInput) {
+                prevCarryOverInput.value = previousMonthCarryOver.toFixed(1);
+            }
+
+            // 현재 월의 일별 데이터 UI에 반영
+            for (let day = 1; day <= 31; day++) {
+                const dailyData = currentMonthData.dailyRecords ? currentMonthData.dailyRecords[`day_${day}`] || {} : {};
+
+                // Entry 1
+                const categorySelector1 = document.querySelector(`.daily-category-selector[data-employee-id="${employeeId}"][data-day="${day}"][data-entry="1"]`);
+                const totalInput1 = document.querySelector(`.daily-total-input[data-employee-id="${employeeId}"][data-day="${day}"][data-entry="1"]`);
+
+                if (categorySelector1) categorySelector1.value = dailyData.category1 || 'null';
+                if (totalInput1) totalInput1.value = dailyData.total1 || '';
+
+                // Entry 2
+                const categorySelector2 = document.querySelector(`.daily-category-selector[data-employee-id="${employeeId}"][data-day="${day}"][data-entry="2"]`);
+                const totalInput2 = document.querySelector(`.daily-total-input[data-employee-id="${employeeId}"][data-day="${day}"][data-entry="2"]`);
+
+                if (categorySelector2) categorySelector2.value = dailyData.category2 || 'null';
+                if (totalInput2) totalInput2.value = dailyData.total2 || '';
+
+                const commentInput = document.querySelector(`.comment-input[data-employee-id="${employeeId}"][data-day="${day}"]`);
+                if (commentInput) commentInput.value = dailyData.comment || '';
+
+                // 각 일별 항목에 대해 계산 수행 (UI 업데이트 및 월별 총합에 반영)
+                calculateDailyEntry(employeeId, day.toString());
+            }
+            // 월별 총합 및 잔여 시간 계산 (이월 시간 포함)
+            calculateEmployeeMonthlyTotal(employeeId, previousMonthCarryOver);
+        }
+
+        // --- Firestore 데이터 저장 함수 (단일 직원용) ---
+        async function saveEmployeeMonthlyData() {
+            if (!currentUserId) {
+                console.warn("사용자가 인증되지 않았습니다. 데이터를 저장할 수 없습니다.");
+                return;
+            }
+
+            // 현재 역할이 관리자인지 확인 후 저장
+            if (currentRole !== 'admin') {
+                console.warn("일반 사용자는 데이터를 저장할 수 없습니다.");
+                if (saveStatusElement) {
+                    saveStatusElement.textContent = '저장 권한 없음!';
+                    saveStatusElement.classList.add('error');
+                    setTimeout(() => saveStatusElement.classList.remove('visible'), 3000);
+                }
+                return; // 관리자가 아니면 저장 방지
+            }
+
+            if (saveStatusElement) {
+                saveStatusElement.textContent = '저장 중...';
+                saveStatusElement.classList.add('visible');
+                saveStatusElement.classList.remove('success', 'error');
+            }
+
+            try {
+                const employeeId = currentEmployeeId; // 현재 선택된 직원 ID 사용
+                const section = document.querySelector(`.employee-section[data-employee-id="${employeeId}"]`);
+                if (!section) {
+                    console.error(`직원 ID ${employeeId}에 대한 섹션을 찾을 수 없습니다. 저장할 수 없습니다.`);
+                    return;
+                }
+
+                const employeeNameInput = section.querySelector('.employee-name-input');
+                const employeeName = employeeNameInput ? employeeNameInput.value : `직원${employeeId}`;
+
+                // 1. 직원 이름 저장 (employee_metadata 컬렉션)
+                // Firebase Firestore 경로: artifacts/{appId}/employee_metadata/{employeeId}
+                const employeeNameDocRef = doc(db, `artifacts/${appId}/employee_metadata`, `employee_${employeeId}`);
+                await setDoc(employeeNameDocRef, { employeeName: employeeName }, { merge: true });
+
+                // 2. 월별 근무 기록 저장 (shared_records_data 컬렉션)
+                const monthlyDataToSave = {
+                    employeeName: employeeName, // 월별 데이터에도 이름 포함 (이전 버전 호환성)
+                    month: currentMonth,
+                    year: currentYear,
+                    monthlyGrandTotal: parseFloat(document.querySelector(`.monthly-grand-total-output[data-employee-id="${employeeId}"]`).value) || 0,
+                    remainingTime: parseFloat(document.querySelector(`.current-remaining-time-output[data-employee-id="${employeeId}"]`).value) || 0,
+                    dailyRecords: {}
+                };
+
+                for (let day = 1; day <= 31; day++) {
+                    // Entry 1
+                    const categorySelector1 = document.querySelector(`.daily-category-selector[data-employee-id="${employeeId}"][data-day="${day}"][data-entry="1"]`);
+                    const totalInput1 = document.querySelector(`.daily-total-input[data-employee-id="${employeeId}"][data-day="${day}"][data-entry="1"]`);
+                    const x1_5Output1 = document.querySelector(`.daily-x1_5-output[data-employee-id="${employeeId}"][data-day="${day}"][data-entry="1"]`);
+
+                    const category1 = categorySelector1 ? categorySelector1.value : 'null';
+                    const total1 = parseFloat(totalInput1.value) || '';
+                    const x1_5_1 = parseFloat(x1_5Output1.value) || 0;
+
+                    // Entry 2
+                    const categorySelector2 = document.querySelector(`.daily-category-selector[data-employee-id="${employeeId}"][data-day="${day}"][data-entry="2"]`);
+                    const totalInput2 = document.querySelector(`.daily-total-input[data-employee-id="${employeeId}"][data-day="${day}"][data-entry="2"]`);
+                    const x1_5Output2 = document.querySelector(`.daily-x1_5-output[data-employee-id="${employeeId}"][data-day="${day}"][data-entry="2"]`);
+
+                    const category2 = categorySelector2 ? categorySelector2.value : 'null';
+                    const total2 = parseFloat(totalInput2.value) || '';
+                    const x1_5_2 = parseFloat(x1_5Output2.value) || 0;
+
+                    const commentInput = document.querySelector(`.comment-input[data-employee-id="${employeeId}"][data-day="${day}"]`);
+                    const dailyGrandTotalOutput = document.querySelector(`.daily-grand-total-output[data-employee-id="${employeeId}"][data-day="${day}"]`);
+
+                    const comment = commentInput ? commentInput.value : '';
+                    const dailyTotal = parseFloat(dailyGrandTotalOutput.value) || 0;
+
+                    if (category1 !== 'null' || total1 !== '' || category2 !== 'null' || total2 !== '' || comment !== '') {
+                        monthlyDataToSave.dailyRecords[`day_${day}`] = {
+                            category1: category1,
+                            total1: total1,
+                            x1_5_1: x1_5_1,
+                            category2: category2,
+                            total2: total2,
+                            x1_5_2: x1_5_2,
+                            comment: comment,
+                            dailyTotal: dailyTotal
+                        };
+                    }
+                }
+
+                // Firebase Firestore 경로: artifacts/{appId}/shared_records_data/{recordId}
+                const docRef = doc(db, `artifacts/${appId}/shared_records_data`, `${employeeId}_${currentYear}_${currentMonth}`);
+                await setDoc(docRef, monthlyDataToSave, { merge: true });
+
+                console.log(`직원 ${employeeId}의 데이터가 Firestore에 저장되었습니다.`);
+                if (saveStatusElement) {
+                    saveStatusElement.textContent = '저장됨';
+                    saveStatusElement.classList.add('success');
+                    setTimeout(() => saveStatusElement.classList.remove('visible'), 2000);
+                }
+                // 저장 후 직원 선택 드롭다운을 다시 채워 변경된 이름이 반영되도록 함
+                await populateEmployeeSelector();
+
+            } catch (error) {
+                console.error("데이터 저장 실패:", error);
+                if (saveStatusElement) {
+                    saveStatusElement.textContent = '저장 실패!';
+                    saveStatusElement.classList.add('error');
+                    setTimeout(() => saveStatusElement.classList.remove('visible'), 3000);
+                }
+            }
+        }
+
+        // --- 자동 저장 디바운스 함수 ---
+        function debounceSave() {
+            if (saveTimer) {
+                clearTimeout(saveTimer);
+            }
+            if (saveStatusElement) {
+                saveStatusElement.textContent = '변경 중...';
+                saveStatusElement.classList.add('visible');
+                saveStatusElement.classList.remove('success', 'error');
+            }
+            saveTimer = setTimeout(() => {
+                saveEmployeeMonthlyData(); // 현재 선택된 직원 데이터 저장
+            }, SAVE_DELAY);
+        }
+
+        /**
+         * 현재 역할(관리자/사용자)에 따라 권한을 적용합니다.
+         * 입력 필드와 선택기를 비활성화/활성화합니다.
+         * @param {string} role - 현재 사용자 역할 ('admin' 또는 'user').
+         */
+        function applyRolePermissions(role) {
+            const isEditable = (role === 'admin');
+            document.querySelectorAll('.daily-total-input, .daily-category-selector, .comment-input, .employee-name-input').forEach(element => {
+                // 계산된 출력(예: daily-x1_5-output, daily-grand-total-output, monthly-grand-total-output, current-remaining-time-output)은
+                // 'calc-output' 클래스를 가지고 있으므로 계속 읽기 전용으로 유지됩니다.
+                if (!element.classList.contains('calc-output')) {
+                    element.disabled = !isEditable;
+                }
+            });
+            // 다운로드 버튼은 역할과 관계없이 항상 사용 가능해야 합니다.
+            downloadHtmlButton.disabled = false;
+        }
+
+        // --- 계산 로직 함수 ---
+
+        // 카테고리별 행 배경색 매핑 객체
+        const categoryRowColors = {
+            'null': 'transparent', // 기본 흰색
+            '야간': '#e0f2ff', // 연한 하늘색
+            '조퇴': '#fff0e6', // 연한 주황
+            'OT': '#e6ffe6',   // 연한 초록
+            '늦출': '#f0e6ff', // 연한 보라
+            // 기타 카테고리 (현재 드롭다운에 없지만, CSS에 정의되어 있음)
+            '오전': '#d9b3ff',
+            '오후': '#ffe6f2',
+            '연장': '#e6f7ff',
+            '병가': '#f5f5f5',
+            '휴가': '#ccffcc'
+        };
+
+        /**
+         * 특정 직원의 특정 날짜에 대한 계산을 수행합니다.
+         * @param {string} employeeId - 직원 ID.
+         * @param {string} day - 날짜 (1-31).
+         */
+        function calculateDailyEntry(employeeId, day) {
+            // Entry 1
+            const categorySelector1 = document.querySelector(`.daily-category-selector[data-employee-id="${employeeId}"][data-day="${day}"][data-entry="1"]`);
+            const totalInput1 = document.querySelector(`.daily-total-input[data-employee-id="${employeeId}"][data-day="${day}"][data-entry="1"]`);
+            const x1_5Output1 = document.querySelector(`.daily-x1_5-output[data-employee-id="${employeeId}"][data-day="${day}"][data-entry="1"]`);
+
+            const totalVal1 = parseFloat(totalInput1.value) || 0;
+            const selectedCategory1 = categorySelector1 ? categorySelector1.value : 'null';
+
+            let x1_5CalculatedVal1 = 0;
+            let dailyTotal1 = 0;
+
+            if (selectedCategory1 === '야간' || selectedCategory1 === 'OT') {
+                x1_5CalculatedVal1 = totalVal1 * 1.5;
+                dailyTotal1 = x1_5CalculatedVal1;
+            } else if (selectedCategory1 === '늦출' || selectedCategory1 === '조퇴') {
+                x1_5CalculatedVal1 = 0;
+                dailyTotal1 = -totalVal1;
+            } else {
+                x1_5CalculatedVal1 = 0;
+                dailyTotal1 = 0;
+            }
+            x1_5Output1.value = x1_5CalculatedVal1.toFixed(1);
+
+            // Entry 2
+            const categorySelector2 = document.querySelector(`.daily-category-selector[data-employee-id="${employeeId}"][data-day="${day}"][data-entry="2"]`);
+            const totalInput2 = document.querySelector(`.daily-total-input[data-employee-id="${employeeId}"][data-day="${day}"][data-entry="2"]`);
+            const x1_5Output2 = document.querySelector(`.daily-x1_5-output[data-employee-id="${employeeId}"][data-day="${day}"][data-entry="2"]`);
+
+            const totalVal2 = parseFloat(totalInput2.value) || 0;
+            const selectedCategory2 = categorySelector2 ? categorySelector2.value : 'null';
+
+            let x1_5CalculatedVal2 = 0;
+            let dailyTotal2 = 0;
+
+            if (selectedCategory2 === '야간' || selectedCategory2 === 'OT') {
+                x1_5CalculatedVal2 = totalVal2 * 1.5;
+                dailyTotal2 = x1_5CalculatedVal2;
+            } else if (selectedCategory2 === '늦출' || selectedCategory2 === '조퇴') {
+                x1_5CalculatedVal2 = 0;
+                dailyTotal2 = -totalVal2;
+            } else {
+                x1_5CalculatedVal2 = 0;
+                dailyTotal2 = 0;
+            }
+            x1_5Output2.value = x1_5CalculatedVal2.toFixed(1);
+
+            // 통합 일별 총합
+            const dailyGrandTotalOutput = document.querySelector(`.daily-grand-total-output[data-employee-id="${employeeId}"][data-day="${day}"]`);
+            const combinedDailyTotal = dailyTotal1 + dailyTotal2;
+            dailyGrandTotalOutput.value = combinedDailyTotal.toFixed(1);
+
+            // 첫 번째 카테고리에 따른 행 배경색
+            const dailyEntryRow = document.querySelector(`tr.daily-entry-row[data-employee-id="${employeeId}"][data-day="${day}"]`);
+            if (dailyEntryRow) {
+                // 기존 카테고리 클래스 제거
+                Object.keys(categoryRowColors).forEach(key => {
+                    if (key !== 'null') dailyEntryRow.classList.remove(key.toLowerCase().replace(/ /g, '_'));
+                });
+                // selectedCategory1에 따라 클래스 추가
+                if (selectedCategory1 !== 'null') {
+                    dailyEntryRow.classList.add(selectedCategory1.toLowerCase().replace(/ /g, '_'));
+                } else if (selectedCategory2 !== 'null') { // 첫 번째가 null이면 두 번째 확인
+                    dailyEntryRow.classList.add(selectedCategory2.toLowerCase().replace(/ /g, '_'));
+                } else {
+                    dailyEntryRow.classList.add('null'); // 둘 다 null이면 기본 흰색
+                }
+            }
+        }
+
+        /**
+         * 특정 직원의 월별 총합 및 잔여 시간을 계산합니다.
+         * @param {string} employeeId - 직원 ID.
+         * @param {number} previousMonthCarryOver - 이전 달에서 이월된 시간.
+         */
+        function calculateEmployeeMonthlyTotal(employeeId, previousMonthCarryOver = 0) {
+            const dailyTotals = document.querySelectorAll(`.daily-grand-total-output[data-employee-id="${employeeId}"]`);
+            let monthlySumOfDailyTotals = 0;
+            dailyTotals.forEach(output => {
+                monthlySumOfDailyTotals += parseFloat(output.value) || 0;
+            });
+
+            // 월별 총합 (일별 합계 + 이전 달 이월 시간)
+            const finalMonthlyTotal = monthlySumOfDailyTotals + previousMonthCarryOver;
+
+            // 잔여 시간 계산: 월별 총합과 동일하게 표시
+            const displayRemainingTime = finalMonthlyTotal; // 잔여 시간을 월별 총합과 동일하게 설정
+
+            const monthlyGrandTotalOutput = document.querySelector(`.monthly-grand-total-output[data-employee-id="${employeeId}"]`);
+            const currentRemainingTimeOutput = document.querySelector(`.current-remaining-time-output[data-employee-id="${employeeId}"]`);
+
+            if (monthlyGrandTotalOutput) {
+                monthlyGrandTotalOutput.value = finalMonthlyTotal.toFixed(1); // 소수점 첫째 자리까지 표시
+            }
+            if (currentRemainingTimeOutput) {
+                currentRemainingTimeOutput.value = displayRemainingTime.toFixed(1); // 소수점 첫째 자리까지 표시
+
+                // 잔여 시간이 음수일 경우 빨간색으로 표시하는 로직은 더 이상 필요 없을 수 있지만,
+                // 혹시 다른 계산 로직이 추가될 경우를 대비하여 유지하거나 제거할 수 있습니다.
+                // 현재는 displayRemainingTime이 항상 양수이므로 이 클래스는 적용되지 않습니다.
+                if (displayRemainingTime < 0) { // 이 조건은 이제 거의 참이 되지 않습니다.
+                    currentRemainingTimeOutput.classList.add('negative');
+                } else {
+                    currentRemainingTimeOutput.classList.remove('negative');
+                }
+            }
+        }
+
+        // --- 직원 시트의 이벤트 리스너 연결 함수 ---
+        function attachEmployeeSheetListeners(employeeId) {
+            // 각 직원의 일별 total 입력 필드에 이벤트 리스너 추가 (두 개의 entry 모두)
+            document.querySelectorAll(`.daily-total-input[data-employee-id="${employeeId}"]`).forEach(input => {
+                // 기존 리스너 제거 (중복 방지)
+                input.removeEventListener('input', handleDailyInput);
+                input.addEventListener('input', handleDailyInput);
+            });
+
+            // 각 직원의 일별 카테고리 드롭다운에 이벤트 리스너 추가 (두 개의 entry 모두)
+            document.querySelectorAll(`.daily-category-selector[data-employee-id="${employeeId}"]`).forEach(selector => {
+                // 기존 리스너 제거 (중복 방지)
+                selector.removeEventListener('change', handleDailyCategoryChange);
+                selector.addEventListener('change', handleDailyCategoryChange);
+            });
+
+            // 직원 이름 입력 필드에 'input' 이벤트 리스너 추가 (저장 시 사용)
+            const employeeNameInput = document.querySelector(`.employee-name-input[data-employee-id="${employeeId}"]`);
+            if (employeeNameInput) {
+                employeeNameInput.removeEventListener('input', debounceSave);
+                employeeNameInput.addEventListener('input', debounceSave);
+            }
+
+            // 코멘트 입력 필드에 'input' 이벤트 리스너 추가 (저장 시 사용)
+            document.querySelectorAll(`.comment-input[data-employee-id="${employeeId}"]`).forEach(input => {
+                input.removeEventListener('input', debounceSave);
+                input.addEventListener('input', debounceSave);
+            });
+        }
+
+        // 일별 입력 필드 변경 핸들러
+        function handleDailyInput(event) {
+            const employeeId = event.target.dataset.employeeId;
+            const day = event.target.dataset.day;
+            calculateDailyEntry(employeeId, day);
+            const prevCarryOver = parseFloat(document.querySelector(`.previous-carry-over-input[data-employee-id="${employeeId}"]`).value) || 0;
+            calculateEmployeeMonthlyTotal(employeeId, prevCarryOver);
+            debounceSave();
+        }
+
+        // 일별 카테고리 변경 핸들러
+        function handleDailyCategoryChange(event) {
+            const employeeId = event.target.dataset.employeeId;
+            const day = event.target.dataset.day;
+            calculateDailyEntry(employeeId, day);
+            const prevCarryOver = parseFloat(document.querySelector(`.previous-carry-over-input[data-employee-id="${employeeId}"]`).value) || 0;
+            calculateEmployeeMonthlyTotal(employeeId, prevCarryOver);
+            debounceSave();
+        }
+
+
+        // --- DOMContentLoaded 이벤트 리스너 ---
+        document.addEventListener('DOMContentLoaded', () => {
+            saveStatusElement = document.getElementById('save-status'); // 저장 상태 요소 초기화
+
+            // --- 다운로드 기능 추가 ---
+            const downloadButton = document.getElementById('downloadHtmlButton');
+            downloadButton.addEventListener('click', () => {
+                // 현재 문서의 전체 HTML 내용을 가져옵니다.
+                const htmlContent = document.documentElement.outerHTML;
+                // Blob 객체로 생성합니다.
+                const blob = new Blob([htmlContent], { type: 'text/html' });
+                // 다운로드 링크를 생성합니다.
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'index.html'; // 파일 이름을 'index.html'로 고정
+                // 링크를 클릭하여 다운로드를 트리거합니다.
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(a.href); // 사용 후 URL 해제
+            });
+        });
+    </script>
+
+    <script>
+        // 이 스크립트는 DOMContentLoaded 이벤트 리스너 밖에서 실행되어야 합니다.
+        // (DOMContentLoaded는 이미 HTML이 파싱된 후에 실행되므로, 이 스크립트가 먼저 실행되어야 함)
+        const daysOfWeek = ['월', '화', '수', '목', '금', '토', '일'];
+        const employeeCount = 27; // 총 직원 수
+        const daysInMonth = 31; // 한 달의 최대 일수
+        const employeeSheetsContainer = document.getElementById('employee-sheets-container');
+
+        // 직원 섹션 템플릿 생성 함수
+        function createEmployeeSection(empId) {
+            const sectionDiv = document.createElement('div');
+            sectionDiv.classList.add('employee-section');
+            sectionDiv.dataset.employeeId = empId;
+
+            sectionDiv.innerHTML = `
+                <div class="employee-name">
+                    <input type="text" class="employee-name-input" data-employee-id="${empId}" value="직원${empId}"> 님
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>날짜</th>
+                            <th>카테고리 1</th>
+                            <th>total 1</th>
+                            <th>X 1.5 1</th>
+                            <th>카테고리 2</th>
+                            <th>total 2</th>
+                            <th>X 1.5 2</th>
+                            <th>일별 TOTAL</th>
+                            <th>코멘트</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employee-table-body-${empId}">
+                        <!-- 일별 행은 아래 for 루프에서 동적으로 추가됩니다. -->
+                    </tbody>
+                </table>
+                <!-- 월별 요약 정보 (이월, 잔여, 총합) -->
+                <table style="margin-top: 15px;">
+                    <tr class="carryover-row">
+                        <td colspan="2" style="text-align: right;">이월 시간 (이전 달):</td>
+                        <td><input type="number" class="calc-output previous-carry-over-input" data-employee-id="${empId}" value="0" readonly></td>
+                        <td colspan="6"></td> <!-- 빈 셀, colspan 조정 -->
+                    </tr>
+                    <tr class="monthly-summary-row">
+                        <td colspan="2" style="text-align: right;">월별 총합:</td>
+                        <td class="monthly-grand-total-cell">
+                            <input type="number" class="calc-output monthly-grand-total-output" data-employee-id="${empId}" value="0" readonly style="width: 100%;">
+                        </td>
+                        <td colspan="6"></td> <!-- 빈 셀, colspan 조정 -->
+                    </tr>
+                    <tr class="remaining-row">
+                        <td colspan="2" style="text-align: right;">잔여 시간 (다음 달 이월):</td>
+                        <td><input type="number" class="calc-output current-remaining-time-output" data-employee-id="${empId}" value="0" readonly></td>
+                        <td colspan="6"></td> <!-- 빈 셀, colspan 조정 -->
+                    </tr>
+                </table>
+            `;
+
+            const employeeTableBody = sectionDiv.querySelector(`#employee-table-body-${empId}`);
+            const categories = ["야간", "조퇴", "OT", "늦출"]; // 4가지 항목으로 제한
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                let categoryOptionsHtml = `<option value="null"></option>`;
+                categories.forEach(cat => {
+                    categoryOptionsHtml += `<option value="${cat}">${cat}</option>`;
+                });
+
+                const row = `
+                    <tr class="daily-entry-row" data-employee-id="${empId}" data-day="${day}">
+                        <td>${day}일</td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="${empId}" data-day="${day}" data-entry="1">
+                                ${categoryOptionsHtml}
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="${empId}" data-day="${day}" data-entry="1" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="${empId}" data-day="${day}" data-entry="1" value="0" readonly></td>
+                        <td>
+                            <select class="daily-category-selector" data-employee-id="${empId}" data-day="${day}" data-entry="2">
+                                ${categoryOptionsHtml}
+                            </select>
+                        </td>
+                        <td><input type="number" class="calc-input daily-total-input" data-employee-id="${empId}" data-day="${day}" data-entry="2" value=""></td>
+                        <td><input type="number" class="calc-output daily-x1_5-output" data-employee-id="${empId}" data-day="${day}" data-entry="2" value="0" readonly></td>
+                        <td class="daily-total-cell"><input type="number" class="calc-output daily-grand-total-output" data-employee-id="${empId}" data-day="${day}" value="0" readonly></td>
+                        <td><input type="text" class="comment-input" data-employee-id="${empId}" data-day="${day}" placeholder="코멘트 입력"></td>
+                    </tr>
+                `;
+                employeeTableBody.innerHTML += row;
+            }
+            return sectionDiv;
+        }
+
+        // 모든 직원 섹션을 동적으로 생성하여 컨테이너에 추가하는 초기 루프는 제거되었습니다.
+        // 이제 `loadSelectedEmployeeData` 함수가 필요에 따라 단일 직원 섹션을 생성합니다.
+    </script>
+
+
+<ins class="adsbygoogle adsbygoogle-noablate" data-adsbygoogle-status="done" style="display: none !important;"><div id="aswift_0_host" style="border: none; height: 0px; width: 0px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block;"><iframe id="aswift_0" name="aswift_0" browsingtopics="true" style="left:0;position:absolute;top:0;border:0;width:undefinedpx;height:undefinedpx;min-height:auto;max-height:none;min-width:auto;max-width:none;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="https://googleads.g.doubleclick.net/pagead/ads?client=ca-pub-9471404163603833&amp;output=html&amp;adk=1812271804&amp;adf=3279755399&amp;abgtt=6&amp;plat=1%3A512%2C2%3A512%2C3%3A66048%2C4%3A66048%2C8%3A512%2C9%3A33280%2C16%3A8388608%2C17%3A32%2C24%3A32%2C25%3A32%2C26%3A512%2C27%3A512%2C30%3A512%2C32%3A32%2C41%3A32%2C42%3A32&amp;format=0x0&amp;url=https%3A%2F%2Fgemini.google.com&amp;pra=5&amp;wgl=1&amp;aihb=0&amp;asro=0&amp;aifxl=29_18~30_19&amp;aiapm=0.07941539223697106&amp;aiapmd=0.15&amp;aiapmi=0.16&amp;aiapmid=0.16&amp;aiact=0.6155063789295729&amp;aiactd=0.7&amp;aicct=0.6036331124524906&amp;aicctd=0.7&amp;ailct=0.6003189105851716&amp;ailctd=0.7&amp;aimart=6&amp;aimartd=8&amp;uach=WyJBbmRyb2lkIiwiMTUuMC4wIiwiIiwiU00tUzkzNk4iLCIxMzcuMC43MTUxLjExNSIsbnVsbCwxLG51bGwsIiIsW1siR29vZ2xlIENocm9tZSIsIjEzNy4wLjcxNTEuMTE1Il0sWyJDaHJvbWl1bSIsIjEzNy4wLjcxNTEuMTE1Il0sWyJOb3QvQSlCcmFuZCIsIjI0LjAuMC4wIl1dLDBd&amp;dt=1751639142502&amp;bpp=5&amp;bdt=398&amp;idt=334&amp;shv=r20250630&amp;mjsv=m202507010101&amp;ptt=9&amp;saldr=aa&amp;nras=1&amp;correlator=2009842470076&amp;frm=8&amp;ife=1&amp;pv=2&amp;nhd=1&amp;u_tz=540&amp;u_his=1&amp;u_h=833&amp;u_w=385&amp;u_ah=833&amp;u_aw=385&amp;u_cd=24&amp;u_sd=3.75&amp;dmc=8&amp;adx=-12245933&amp;ady=-12245933&amp;biw=-12245933&amp;bih=-12245933&amp;isw=980&amp;ish=1925&amp;ifk=2244268612&amp;scr_x=-12245933&amp;scr_y=-12245933&amp;eid=31093235%2C95353387%2C95362655%2C95365225%2C95365461%2C95365111%2C95359265%2C95365118%2C95365798&amp;oid=2&amp;pvsid=4064293090739587&amp;tmod=865737609&amp;uas=0&amp;nvt=1&amp;fsapi=1&amp;usrc=1&amp;brdim=0%2C0%2C0%2C0%2C385%2C0%2C384%2C699%2C980%2C1925&amp;vis=1&amp;rsz=%7C%7Cs%7C&amp;abl=NS&amp;fu=0&amp;bc=31&amp;bz=1&amp;td=1&amp;tdf=2&amp;psd=W251bGwsbnVsbCxudWxsLDNd&amp;nt=1&amp;ifi=1&amp;uci=1.jwaqrujc8wdy&amp;fsb=1&amp;dtd=385" data-google-container-id="1.jwaqrujc8wdy" tabindex="0" title="Advertisement" aria-label="Advertisement" data-load-complete="true"></iframe></div></ins><fencedframe id="ps_caff" style="display: none;"></fencedframe><iframe ng-non-bindable="" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" tabindex="-1" vspace="0" width="100%" aria-hidden="true" id="I0_1751639143251" name="I0_1751639143251" src="https://sample-firebase-ai-app-ae6d0.firebaseapp.com/__/auth/iframe?apiKey=AIzaSyBcCFsJBaa8nHOTbBJCc_2aiFh-9xbsZt8&amp;appName=%5BDEFAULT%5D&amp;v=11.6.1&amp;eid=p&amp;usegapi=1&amp;jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.ko.WGpIV2x4iQY.O%2Fd%3D1%2Frs%3DAHpOoo8VgFeuWEnkRtIwJ-OxuMAcCwfIKg%2Fm%3D__features__#id=I0_1751639143251&amp;_gfid=I0_1751639143251&amp;parent=blob%3A%2F%2F&amp;pfname=&amp;rpctoken=66098527" style="position: absolute; top: -100px; width: 1px; height: 1px;"></iframe><iframe src="https://www.google.com/recaptcha/api2/aframe" width="0" height="0" style="display: none;"></iframe></body><iframe id="google_esf" name="google_esf" src="https://googleads.g.doubleclick.net/pagead/html/r20250630/r20190131/zrt_lookup_fy2021.html" style="display: none;"></iframe></html>
